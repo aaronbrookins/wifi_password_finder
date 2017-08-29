@@ -1,0 +1,44 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace WiFiPwd
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            
+
+            Process wifiFinder = new Process();
+            wifiFinder.StartInfo.FileName = "Wifi Password Finder.exe";
+            wifiFinder.StartInfo.UseShellExecute = false;
+            wifiFinder.StartInfo.RedirectStandardOutput = true;
+            wifiFinder.StartInfo.RedirectStandardInput = true;
+
+            string wifi = GetUserWiFi();
+            wifiFinder.StandardInput.WriteLine("netsh wlan show profile name={0} key=clear | findstr Key", wifi);
+            Console.ReadKey();
+
+
+
+        }
+
+        private static void GetWiFiPassword(string wifi)
+        {
+            string cmd = String.Format("netsh wlan show profile name={0} key=clear | findstr Key", wifi);
+            System.Diagnostics.Process.Start("cmd.exe", cmd);
+           
+        }
+
+        private static string GetUserWiFi()
+        {
+            Console.WriteLine("Please enter the SSID: ");
+            string name = Console.ReadLine();
+            return name;
+        }
+    }
+}
