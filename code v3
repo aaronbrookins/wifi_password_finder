@@ -1,0 +1,52 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace WiFiPwd
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            
+
+            Process wifiFinder = new Process();
+            ProcessStartInfo info = new ProcessStartInfo
+            {
+                FileName = "cmd.exe",
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardInput = true,
+                WorkingDirectory = @"C:\WINDOWS\system32"
+            };
+            wifiFinder.StartInfo = info;
+            wifiFinder.Start();
+            string wifi = GetUserWiFi();
+            string KC = ("\"Key Content\"");
+            char [] delimiter = {' ', '\r', '\n'};
+            string commandString = ("netsh wlan show profile name=" + wifi + " key=clear | findstr " + KC);
+            wifiFinder.StandardInput.WriteLine(commandString);
+            wifiFinder.StandardInput.Flush();
+            wifiFinder.StandardInput.Close();
+            wifiFinder.WaitForExit();
+            string mainOutput = wifiFinder.StandardOutput.ReadToEnd();
+            string[] commandStringOutput = mainOutput.Split(delimiter);
+            Console.WriteLine("\nNetwork Key: " + commandStringOutput[commandStringOutput.Length - 5]);
+            Console.ReadKey();
+
+
+
+        }
+
+        private static string GetUserWiFi()
+        {
+            Console.WriteLine("Please enter the SSID: \n");
+            string name = Console.ReadLine();
+            return name;
+        }
+    }
+}
